@@ -16,11 +16,12 @@ use App\Http\Controllers\AssuntoController;
 
 use App\Http\Controllers\OrgaoController;
 
+$router->group(['prefix' => '/api'], function () use ($router) {
+    $router->group(['prefix' => 'programa'], function () use ($router) {
 
-$router->group(['prefix' => 'questoes'], function () use ($router) {
+        $router->get('banca', 'BancaController@show');
+        $router->get('orgao', 'OrgaoController@show');
+        $router->get('assunto', 'AssuntoController@show');
 
-    $router->get('banca', 'BancaController@show');
-    $router->get('orgao', 'OrgaoController@show');
-    $router->get('assunto', 'AssuntoController@show');
-
+    });
 });

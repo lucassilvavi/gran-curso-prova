@@ -62,21 +62,21 @@ services:
     networks:
       - questoes_network
 
-#  frontend-service-gran:
-#    image: node:10
-#    container_name: gran-web
-#    user: "node"
-#    working_dir: /home/node/app
-#    volumes:
-#      - ./frontend:/home/node/app
-#    command:
-#      sh -c 'npm i && npm run serve'
-#    ports:
-#      - "8083:8080"
-#    environment:
-#      - NODE_ENV=development
-#    networks:
-#      - gran_network
+  frontend-service-gran:
+    image: node:10
+    container_name: gran-web
+    user: "node"
+    working_dir: /home/node/app
+    volumes:
+      - ./frontend:/home/node/app
+    command:
+      sh -c 'npm i && npm run serve'
+    ports:
+      - "8083:8080"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - questoes_network
 
 networks:
   questoes_network:
