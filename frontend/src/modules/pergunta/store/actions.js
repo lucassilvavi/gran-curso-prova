@@ -4,14 +4,14 @@ import * as programaService from '../service/programa';
 export const buscarBancasAction = ({ commit }) => programaService
   .buscarBancas()
   .then((response) => {
-    commit(types.SET_BANCAS, response.data.data);
+    commit(types.SET_BANCAS, response.data);
     return response;
   });
 
 export const buscarOrgaosAction = ({ commit }) => programaService
   .buscarOrgaos()
   .then((response) => {
-    commit(types.SET_ORGAOS, response.data.data);
+    commit(types.SET_ORGAOS, response.data);
     return response;
   });
 

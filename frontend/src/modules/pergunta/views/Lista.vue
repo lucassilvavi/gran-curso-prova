@@ -5,22 +5,23 @@
     </div>
     <div class="card-body">
       <div class="alert alert-success" v-if="messageSucess" role="alert">
-        A simple success alert—check it out!
+        Programa de estudos criado com sucesso !
       </div>
       <blockquote class="blockquote mb-0">
         <form method="post">
           <div class="container">
             <div class="row">
               <div class="col">
+
                 <select class="custom-select">
                   <option selected>Orgão</option>
-                  <option v-for='value in arrayTeste' :value='value.name' >{{value.descricao}}</option>
+                  <option v-for='value in orgaos' :value='value.id' >{{value.nome}}</option>
                 </select>
               </div>
               <div class="col">
                 <select class="custom-select">
                   <option selected>Banca</option>
-                  <option v-for='value in arrayTeste' :value='value.name' >{{value.descricao}}</option>
+                  <option v-for='value in bancas' :value='value.id' >{{value.nome}}</option>
                 </select>
               </div>
               <div class="col">
@@ -41,26 +42,25 @@
     components: {},
     data() {
       return {
-        arrayTeste:[{name:'sksdkn',descricao:'dsdsd'},{name:'sksdkn',descricao:'dsdsd'},{name:'sksdkn',descricao:'dsdsd'}],
         messageSucess: false,
       };
     },
     computed: {
       ...mapGetters({
-        // programas: 'programa/programas',
-        // bancas: 'programa/bancas',
-        // orgaos: 'programa/orgaos',
+        programas: 'pergunta/programas',
+        bancas: 'pergunta/bancas',
+        orgaos: 'pergunta/orgaos',
       }),
     },
     mounted() {
       this.buscarBancasAction();
-      // this.buscarOrgaosAction();
+      this.buscarOrgaosAction();
     },
     methods: {
       ...mapActions({
         buscarBancasAction: 'pergunta/buscarBancasAction',
-        // buscarOrgaosAction: 'programa/buscarOrgaosAction',
-        // cadastrarProgramaAction: 'programa/cadastrarProgramaAction',
+        buscarOrgaosAction: 'pergunta/buscarOrgaosAction',
+        cadastrarProgramaAction: 'programa/cadastrarProgramaAction',
       }),
       cadastrarPrograma(e) {
         e.preventDefault();
