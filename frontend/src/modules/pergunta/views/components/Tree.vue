@@ -1,50 +1,49 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <li v-for="assuntos in item">
-          <div
-            @click="toggle(assuntos)"
-            @dblclick="makeFolder(assuntos)"
-          >
-            {{assuntos.nome}}
-            <span v-if="isFolder(assuntos)">[{{ isOpen ? '-' : '+' }}]</span>
-          </div>
-          <ul v-show="isOpen" v-if="isFolder(assuntos)">
-            <tree
-              :item="assuntos.filhos"
-              @make-folder="$emit('make-folder', $event)"
-            ></tree>
-          </ul>
-        </li>
+  <div class="card">
+    <li>
+      <div
+        :class="{bold: isFolder}"
+        @click="toggle"
+        @dblclick="makeFolder">
+        {{ item.nome }}
+        <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
       </div>
-    </div>
+      <ul v-show="isOpen" v-if="isFolder">
+        <tree
+          class="item"
+          v-for="(child, index) in item.filhos"
+          :key="index"
+          :item="child"
+        ></tree>
+      </ul>
+    </li>
   </div>
 </template>
 <script>
   export default {
     name: 'Tree',
     props: {
-      item: ''
+      item: Object
     },
     data: function () {
       return {
         isOpen: false
       }
     },
+    computed: {
+      isFolder: function () {
+        return this.item.filhos &&
+          this.item.filhos.length
+      }
+    },
     methods: {
-      isFolder: function (e) {
-        return e.filhos &&
-          e.filhos.length
-
-      },
-      toggle: function (e) {
-        if (this.isFolder(e)) {
+      toggle: function () {
+        if (this.isFolder) {
           this.isOpen = !this.isOpen
         }
       },
-      makeFolder: function (e) {
-        if (!this.isFolder(e)) {
+      makeFolder: function () {
+        if (!this.isFolder) {
           this.$emit('make-folder', this.item)
           this.isOpen = true
         }
@@ -56,5 +55,16 @@
   body {
     font-family: Menlo, Consolas, monospace;
     color: #444;
+  }
+  .item {
+    cursor: pointer;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  ul {
+    padding-left: 1em;
+    line-height: 1.5em;
+    list-style-type: dot;
   }
 </style>

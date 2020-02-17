@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Models\Assunto;
 use Illuminate\Database\Eloquent\Collection;
+use phpDocumentor\Reflection\Types\Object_;
 
 class AssuntoRepository
 {
@@ -44,15 +45,15 @@ class AssuntoRepository
 
     public function getArvore(Collection $rlOrgaoBanca)
     {
-          $rlOrgaoBanca->map(function ($item) {
-            $item->questoes = $this->getQuestoes($item->id);
-              $item->questoes->map(function ($assunto){
-                  $assunto->assuntos = $this->getPai($assunto->id);
-                  $this->getfilhos($assunto->assuntos);
-              });
+        $arvore = (object) array();
+        foreach ($rlOrgaoBanca as $item){
+            $arvore->questoes = $this->getQuestoes($item->id);
+            $arvore->questoes->map(function ($assunto){
+                    $assunto->assuntos = $this->getPai($assunto->id);
+                    $this->getfilhos($assunto->assuntos);
+                });
 
-
-        });
-       return $rlOrgaoBanca;
+        }
+       return $arvore;
     }
 }

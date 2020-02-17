@@ -7,22 +7,29 @@
       <div class="alert alert-success" v-if="messageSucess" role="alert">
         Programa de estudos criado com sucesso !
       </div>
+      <div style="color: lightcoral">
+        <span v-if="errors.length">
+          <b>Por favor, selecione os seguinte(s) campo(s):</b>
+        <ul>
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+        </span>
+      </div>
       <blockquote class="blockquote mb-0">
         <form
           ref="form"
-          v-model="valid"
           autocomplete="off">
           <div class="container">
             <div class="row">
               <div class="col">
                 <select v-model="programa.orgao" class="custom-select">
                   <option value="">Orgão</option>
-                  <option v-for='value in orgaos' :value='value.id'>{{value.nome}}</option>
+                  <option v-for='value in orgaos' :value='value'>{{value.nome}}</option>
                 </select>
               </div>
               <div class="col">
                 <select v-model="programa.banca" class="custom-select" :disabled="disabledBanca">
-                  <option v-for='value in bancas' :value='value.id'>{{value.nome}}</option>
+                  <option v-for='value in bancas' :value='value'>{{value.nome}}</option>
                 </select>
               </div>
               <div class="col">
@@ -36,19 +43,29 @@
       </blockquote>
     </div>
     <ul>
-      <div v-for="arv in programas[0]">
-        <span
-        v-for="q in arv">{{q.nome}}</span>
-<!--        <tree :item="q.assuntos"></tree>-->
+      <div v-for="dados in programas">
+        <div class="card">
+          <span>Orgão: {{dados.orgao.nome}} - Banca: {{dados.banca.nome}}</span>
+          <div v-for="questao in dados.questoes">
+            <span>{{questao[0].nome}}</span>
+            <div v-for="assuntos in questao[0].assuntos">
+              <tree :item="assuntos"></tree>
+            </div>
+          </div>
+        </div>
+        <br>
       </div>
     </ul>
-
   </div>
 </template>
 <script>
   import {mapGetters, mapActions} from 'vuex';
   import Tree from "./components/Tree";
 
+  const dadosFormulario = {
+    orgao: "",
+    banca: ""
+  }
   export default {
     name: 'Lista',
     components: {Tree},
@@ -56,11 +73,8 @@
       return {
         messageSucess: false,
         disabledBanca: true,
-        valid: false,
-        programa: {
-          orgao: "",
-          banca: ""
-        },
+        errors: [],
+        programa: Object.assign({}, dadosFormulario),
         arvore: [],
       };
     },
@@ -72,9 +86,9 @@
       }),
     },
     watch: {
-      "programa.orgao": function (idOrgao) {
-        this.disabledBanca = idOrgao === '';
-        this.buscarBanca(idOrgao)
+      "programa.orgao": function (orgao) {
+        this.disabledBanca = orgao.id === '';
+        this.buscarBanca(orgao.id)
       },
     },
     mounted() {
@@ -87,10 +101,14 @@
         cadastrarProgramaAction: 'pergunta/cadastrarProgramaAction',
       }),
       cadastrarPrograma() {
-        this.cadastrarProgramaAction({idOrgao: this.programa.orgao, idBanca: this.programa.banca})
+        if (!this.validaSelects(this.programa)) {
+          return false;
+        }
+        this.cadastrarProgramaAction(this.programa)
           .then(() => {
             this.messageSucess = true;
             setTimeout(() => this.messageSucess = false, 2800);
+            this.programa = Object.assign({}, dadosFormulario);
           })
       },
       buscarBanca(idOrgao) {
@@ -98,6 +116,19 @@
           .then((response) => {
             this.bancas = response.data;
           })
+      },
+      validaSelects: function (e) {
+        if (e.banca && e.orgao) {
+          this.errors = [];
+          return true;
+        }
+
+        if (!e.banca) {
+          this.errors.push(`O banca é obrigatório.`);
+        }
+        if (!e.orgao) {
+          this.errors.push('O orgão é obrigatório.');
+        }
       }
     },
   };

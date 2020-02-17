@@ -15,9 +15,11 @@ export const buscarOrgaosAction = ({commit}) => programaService
     return response;
   });
 
-export const cadastrarProgramaAction = ({commit}, {idOrgao, idBanca}) => {
-  return programaService.buscarAssuntos(idBanca, idOrgao)
+export const cadastrarProgramaAction = ({commit}, params) => {
+  return programaService.buscarAssuntos(params.banca.id, params.orgao.id)
     .then((response) => {
-      commit(types.SET_PROGRAMA, response.data);
+      const programa = params;
+      programa.questoes = response.data;
+      commit(types.SET_PROGRAMA, programa);
     });
 };
