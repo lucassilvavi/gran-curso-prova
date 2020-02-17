@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Assunto;
+use App\Models\Questao;
 use Illuminate\Database\Eloquent\Collection;
 use phpDocumentor\Reflection\Types\Object_;
 
@@ -15,45 +16,43 @@ class AssuntoRepository
         $this->model = $assunto;
     }
 
-    public function getQuestoes(int $id_rl_orgao_banca)
+    public function getQuestoes(int $assunto_id)
     {
-        return $this->model
-            ->join('questoes', 'assunto.id', 'questoes.assunto_id')
-            ->where('questoes.rl_orgao_banca_id', $id_rl_orgao_banca)
-            ->where('assunto_pai_id', null)->get();
+        return (app(Questao::class))
+            ->where('assunto_id', $assunto_id)->get();
+
     }
 
-    public function getPai(int $idAssunto)
+    public function getPai($idBanca, $idOrgao)
     {
-        return $this->model
-            ->where('id',$idAssunto)
-            ->where('assunto_pai_id',null)
-            ->get();
+        return (app(Questao::class))
+            ->join('assunto', 'assunto.id', 'assunto_id')
+            ->where('assunto.assunto_pai_id', null)
+            ->where(['banca_id' => $idBanca, 'orgao_id' => $idOrgao])->get();
     }
 
     public function getfilhos(Collection $assuntos)
     {
-
-        $assuntos->map(function ($item){
-            $item->filhos = $this->model->where('assunto_pai_id',$item->id)->get();
-            if (count($item->filhos) > 0 ){
+        $assuntos->map(function ($item) {
+            $item->filhos = $this->model->where('assunto_pai_id', $item->id)->get();
+            $item->questao = $this->getQuestoes($item->id);
+            $item->qt_questao = count($item->questao);
+            if (count($item->filhos) > 0) {
                 $this->getfilhos($item->filhos);
             }
         });
-
     }
 
-    public function getArvore(Collection $rlOrgaoBanca)
-    {
-        $arvore = (object) array();
-        foreach ($rlOrgaoBanca as $item){
-            $arvore->questoes = $this->getQuestoes($item->id);
-            $arvore->questoes->map(function ($assunto){
-                    $assunto->assuntos = $this->getPai($assunto->id);
-                    $this->getfilhos($assunto->assuntos);
-                });
 
-        }
-       return $arvore;
+    public function getArvore($idBanca, $idOrgao)
+    {
+
+        $assuntoPai = $this->getPai($idBanca, $idOrgao);
+        $assuntoPai->map(function ($item) {
+            $item->qt_questao = count($this->getQuestoes($item->id));
+        });
+        $this->getfilhos($assuntoPai);
+
+        return $assuntoPai;
     }
 }

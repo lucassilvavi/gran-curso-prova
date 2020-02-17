@@ -1,14 +1,18 @@
 <template>
-  <div class="card">
+  <div class="card"
+       style="background-color: bisque">
     <li>
       <div
-        :class="{bold: isFolder}"
-        @click="toggle"
-        @dblclick="makeFolder">
+        :class="{bold: isArquivo}"
+        @click="abertir">
         {{ item.nome }}
-        <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+        <span> / Quantidade questão no assunto  - {{item.qt_questao}}</span>
+        <div v-for="questao in item.questao">
+          {{questao.nome}}
+        </div>
+        <span v-if="isArquivo">[{{ isOpen ? '-' : '+' }}]</span>
       </div>
-      <ul v-show="isOpen" v-if="isFolder">
+      <ul v-show="isOpen" v-if="isArquivo">
         <tree
           class="item"
           v-for="(child, index) in item.filhos"
@@ -20,48 +24,38 @@
   </div>
 </template>
 <script>
-  export default {
-    name: 'Tree',
-    props: {
-      item: Object
-    },
-    data: function () {
-      return {
-        isOpen: false
-      }
-    },
-    computed: {
-      isFolder: function () {
-        return this.item.filhos &&
-          this.item.filhos.length
-      }
-    },
-    methods: {
-      toggle: function () {
-        if (this.isFolder) {
-          this.isOpen = !this.isOpen
+    export default {
+        name: 'Tree',
+        props: {
+            item: Object
+        },
+        data: function () {
+            return {
+                isOpen: false,
+                quantidade: 0
+            }
+        },
+        computed: {
+            isArquivo: function () {
+                return this.item.filhos &&
+                    this.item.filhos.length
+            }
+        },
+        methods: {
+            abertir: function () {
+                if (this.isArquivo) {
+                    this.isOpen = !this.isOpen
+                }
+            },
         }
-      },
-      makeFolder: function () {
-        if (!this.isFolder) {
-          this.$emit('make-folder', this.item)
-          this.isOpen = true
-        }
-      }
-    }
-  };
+    };
 </script>
 <style>
-  body {
-    font-family: Menlo, Consolas, monospace;
-    color: #444;
-  }
+
   .item {
     cursor: pointer;
   }
-  .bold {
-    font-weight: bold;
-  }
+
   ul {
     padding-left: 1em;
     line-height: 1.5em;

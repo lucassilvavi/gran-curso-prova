@@ -10,5 +10,5 @@ class Banca extends Model
     protected $fillable = [
         'nome',
     ];
-    protected $timestamp = false;
+    public $timestamps = false;
 }

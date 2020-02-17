@@ -7,9 +7,12 @@
       <div class="alert alert-success" v-if="messageSucess" role="alert">
         Programa de estudos criado com sucesso !
       </div>
+      <div class="alert alert-danger" v-if="messageErro" role="alert">
+        Programa de estudos já criado com essa banca e orgão !
+      </div>
       <div style="color: lightcoral">
         <span v-if="errors.length">
-          <b>Por favor, selecione os seguinte(s) campo(s):</b>
+          <p>Por favor, selecione os seguinte(s) campo(s):</p>
         <ul>
           <li v-for="error in errors">{{ error }}</li>
         </ul>
@@ -28,7 +31,8 @@
                 </select>
               </div>
               <div class="col">
-                <select v-model="programa.banca" class="custom-select" :disabled="disabledBanca">
+                <select v-model="programa.banca" class="custom-select">
+                  <option value="">Banca</option>
                   <option v-for='value in bancas' :value='value'>{{value.nome}}</option>
                 </select>
               </div>
@@ -44,13 +48,11 @@
     </div>
     <ul>
       <div v-for="dados in programas">
+
         <div class="card">
-          <span>Orgão: {{dados.orgao.nome}} - Banca: {{dados.banca.nome}}</span>
-          <div v-for="questao in dados.questoes">
-            <span>{{questao[0].nome}}</span>
-            <div v-for="assuntos in questao[0].assuntos">
-              <tree :item="assuntos"></tree>
-            </div>
+          <span style="background-color: burlywood">Orgão: {{dados.orgao.nome}} - Banca: {{dados.banca.nome}}</span>
+          <div v-for="assunto in dados.assuntos">
+            <tree :item="assunto"></tree>
           </div>
         </div>
         <br>
@@ -59,77 +61,78 @@
   </div>
 </template>
 <script>
-  import {mapGetters, mapActions} from 'vuex';
-  import Tree from "./components/Tree";
+    import {mapGetters, mapActions} from 'vuex';
+    import Tree from "./components/Tree";
 
-  const dadosFormulario = {
-    orgao: "",
-    banca: ""
-  }
-  export default {
-    name: 'Lista',
-    components: {Tree},
-    data() {
-      return {
-        messageSucess: false,
-        disabledBanca: true,
-        errors: [],
-        programa: Object.assign({}, dadosFormulario),
-        arvore: [],
-      };
-    },
-    computed: {
-      ...mapGetters({
-        programas: 'pergunta/programas',
-        bancas: 'pergunta/bancas',
-        orgaos: 'pergunta/orgaos',
-      }),
-    },
-    watch: {
-      "programa.orgao": function (orgao) {
-        this.disabledBanca = orgao.id === '';
-        this.buscarBanca(orgao.id)
-      },
-    },
-    mounted() {
-      this.buscarOrgaosAction();
-    },
-    methods: {
-      ...mapActions({
-        buscarBancasAction: 'pergunta/buscarBancasAction',
-        buscarOrgaosAction: 'pergunta/buscarOrgaosAction',
-        cadastrarProgramaAction: 'pergunta/cadastrarProgramaAction',
-      }),
-      cadastrarPrograma() {
-        if (!this.validaSelects(this.programa)) {
-          return false;
-        }
-        this.cadastrarProgramaAction(this.programa)
-          .then(() => {
-            this.messageSucess = true;
-            setTimeout(() => this.messageSucess = false, 2800);
-            this.programa = Object.assign({}, dadosFormulario);
-          })
-      },
-      buscarBanca(idOrgao) {
-        this.buscarBancasAction(idOrgao)
-          .then((response) => {
-            this.bancas = response.data;
-          })
-      },
-      validaSelects: function (e) {
-        if (e.banca && e.orgao) {
-          this.errors = [];
-          return true;
-        }
-
-        if (!e.banca) {
-          this.errors.push(`O banca é obrigatório.`);
-        }
-        if (!e.orgao) {
-          this.errors.push('O orgão é obrigatório.');
-        }
-      }
-    },
-  };
+    const dadosFormulario = {
+        orgao: "",
+        banca: ""
+    };
+    export default {
+        name: 'Lista',
+        components: {Tree},
+        data() {
+            return {
+                messageSucess: false,
+                messageErro: false,
+                errors: [],
+                programa: Object.assign({}, dadosFormulario),
+            };
+        },
+        computed: {
+            ...mapGetters({
+                programas: 'pergunta/programas',
+                bancas: 'pergunta/bancas',
+                orgaos: 'pergunta/orgaos',
+            }),
+        },
+        mounted() {
+            this.buscarOrgaosAction();
+            this.buscarBancasAction();
+        },
+        methods: {
+            ...mapActions({
+                buscarBancasAction: 'pergunta/buscarBancasAction',
+                buscarOrgaosAction: 'pergunta/buscarOrgaosAction',
+                cadastrarProgramaAction: 'pergunta/cadastrarProgramaAction',
+            }),
+            cadastrarPrograma() {
+                if (!this.validaSelects(this.programa)) {
+                    return false;
+                }
+                if (!this.validaProgramaCadastrado()) {
+                    return false;
+                }
+                this.cadastrarProgramaAction(this.programa)
+                    .then(() => {
+                        this.messageSucess = true;
+                        setTimeout(() => this.messageSucess = false, 2800);
+                        this.programa = Object.assign({}, dadosFormulario);
+                    })
+            },
+            validaSelects: function (e) {
+                if (e.banca && e.orgao) {
+                    this.errors = [];
+                    return true;
+                }
+                this.errors = [];
+                if (!e.banca) {
+                    this.errors.push(`O banca é obrigatório.`);
+                }
+                if (!e.orgao) {
+                    this.errors.push('O orgão é obrigatório.');
+                }
+            },
+            validaProgramaCadastrado() {
+                const programa = this.programas.filter((e) => e.banca.id === this.programa.banca.id && e.orgao.id === this.programa.orgao.id)
+                this.errors = [];
+                if (programa.length > 0) {
+                    this.messageErro = true;
+                    setTimeout(() => this.messageErro = false, 2800);
+                    return false;
+                }
+                return true;
+            },
+        },
+    };
 </script>

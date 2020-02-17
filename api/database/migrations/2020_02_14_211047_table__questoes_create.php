@@ -16,12 +16,14 @@ class TableQuestoesCreate extends Migration
         Schema::create('questoes', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->string('nome');
-            $table->text('descricao');
-            $table->integer('rl_orgao_banca_id');
-            $table->integer('assunto_id');
+            $table->integer('banca_id')->unsigned();
+            $table->integer('orgao_id')->unsigned();
+            $table->integer('assunto_id')->unsigned();
 
-            $table->foreign('rl_orgao_banca_id')
-                ->references('id')->on('rl_orgao_banca');
+            $table->foreign('orgao_id')
+                ->references('id')->on('orgao');
+            $table->foreign('banca_id')
+                ->references('id')->on('banca');
             $table->foreign('assunto_id')
                 ->references('id')->on('assunto');
         });

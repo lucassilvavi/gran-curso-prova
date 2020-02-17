@@ -11,12 +11,6 @@ class Orgao extends Model
     protected $fillable = [
         'nome',
     ];
-    protected $timestamp = false;
+    public $timestamps = false;
 
-    public function bancas()
-    {
-        return $this->belongsToMany(Banca::class,
-            'rl_orgao_banca',
-            'orgao_id');
-    }
 }

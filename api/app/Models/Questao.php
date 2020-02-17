@@ -11,7 +11,7 @@ class Questao extends Model
     protected $fillable = [
         'nome','descricao','rl_orgao_banca_id'
     ];
-    protected $timestamp = false;
+    public $timestamps = false;
 
 
     public function orgao()

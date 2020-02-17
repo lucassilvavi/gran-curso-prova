@@ -11,6 +11,6 @@ class Assunto extends Model
     protected $fillable = [
         'nome', 'assunto_pai_id',
     ];
-    protected $timestamp = false;
+    public $timestamps = false;
 
 }
