@@ -13,10 +13,9 @@ class TableOrgaoCreate extends Migration
      */
     public function up()
     {
-        Schema::create('Orgao', function (Blueprint $table) {
+        Schema::create('orgao', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->string('nome');
-
         });
     }
 
@@ -27,6 +26,6 @@ class TableOrgaoCreate extends Migration
      */
     public function down()
     {
-        Schema::drop('Orgao');
+        Schema::drop('orgao');
     }
 }

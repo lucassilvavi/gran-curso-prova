@@ -1,25 +1,23 @@
 import * as types from './types';
 import * as programaService from '../service/programa';
 
-export const buscarBancasAction = ({ commit }) => programaService
-  .buscarBancas()
+export const buscarBancasAction = ({commit}, coOrgao) => programaService
+  .buscarBancas(coOrgao)
   .then((response) => {
     commit(types.SET_BANCAS, response.data);
     return response;
   });
 
-export const buscarOrgaosAction = ({ commit }) => programaService
+export const buscarOrgaosAction = ({commit}) => programaService
   .buscarOrgaos()
   .then((response) => {
     commit(types.SET_ORGAOS, response.data);
     return response;
   });
 
-export const cadastrarProgramaAction = ({ commit }, params) => {
-  programaService.buscarAssuntos(params.banca.id_banca, params.orgao.id_orgao)
+export const cadastrarProgramaAction = ({commit}, {idOrgao, idBanca}) => {
+  return programaService.buscarAssuntos(idBanca, idOrgao)
     .then((response) => {
-      const programa = params;
-      programa.assuntos = response.data.data;
-      commit(types.SET_PROGRAMA, programa);
+      commit(types.SET_PROGRAMA, response.data);
     });
 };

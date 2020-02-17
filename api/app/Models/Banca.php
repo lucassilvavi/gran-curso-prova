@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Banca extends Model
 {
-    protected $table = 'Banca';
+    protected $table = 'banca';
 
     protected $fillable = [
         'nome',

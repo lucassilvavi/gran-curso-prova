@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Questao extends Model
 {
-    protected $table = 'Questao';
+    protected $table = 'questoes';
 
     protected $fillable = [
-        'nome','descricao'
+        'nome','descricao','rl_orgao_banca_id'
     ];
     protected $timestamp = false;
 
@@ -18,8 +18,8 @@ class Questao extends Model
     {
         return $this->hasOne(
             Orgao::class,
-            'id_orgao',
-            'id_orgao'
+            'orgao_id',
+            'orgao_id'
         );
     }
 
@@ -27,8 +27,8 @@ class Questao extends Model
     {
         return $this->hasOne(
             Banca::class,
-            'id_banca',
-            'id_banca'
+            'banca_id',
+            'banca_id'
         );
     }
 
@@ -36,8 +36,8 @@ class Questao extends Model
     {
         return $this->hasOne(
             Assunto::class,
-            'id_assunto',
-            'id_assunto_'
+            'assunto_id',
+            'assunto_id'
         );
     }
 }

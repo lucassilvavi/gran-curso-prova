@@ -13,10 +13,9 @@ class TableBancaCreate extends Migration
      */
     public function up()
     {
-        Schema::create('Banca', function (Blueprint $table) {
+        Schema::create('banca', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->string('nome');
-            $table->timestamps();
         });
     }
 
@@ -27,6 +26,6 @@ class TableBancaCreate extends Migration
      */
     public function down()
     {
-        Schema::drop('Banca');
+        Schema::drop('banca');
     }
 }

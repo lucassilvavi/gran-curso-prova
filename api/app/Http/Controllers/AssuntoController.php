@@ -3,13 +3,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Assunto;
+use App\Models\RlOrgaoBanca;
+use App\Repository\AssuntoRepository;
 
 class AssuntoController extends Controller
 {
-    public function show()
+    public function show(int $idBanca, int $idOrgao)
     {
-       $assuntoModel =  app(Assunto::class);
-        return response()->json($assuntoModel, 200);
+        $arvoreAssunto = app(AssuntoRepository::class);
+        $rlOrgaoBanca = app(RlOrgaoBanca::class);
+        $rlOrgaoBanca = ($rlOrgaoBanca
+            ->where('banca_id', $idBanca)
+            ->where('orgao_id', $idOrgao)
+            ->get()
+        );
+        return response()->json($arvoreAssunto->getArvore($rlOrgaoBanca),200);
     }
 }

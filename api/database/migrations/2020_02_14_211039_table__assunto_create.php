@@ -13,10 +13,10 @@ class TableAssuntoCreate extends Migration
      */
     public function up()
     {
-        Schema::create('Assunto', function (Blueprint $table) {
+        Schema::create('assunto', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->string('nome');
-            $table->integer('id_pai');
+            $table->integer('assunto_pai_id')->nullable(false);
         });
     }
 
@@ -27,6 +27,6 @@ class TableAssuntoCreate extends Migration
      */
     public function down()
     {
-        Schema::drop('Assunto');
+        Schema::drop('assunto');
     }
 }

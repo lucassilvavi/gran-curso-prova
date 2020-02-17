@@ -19,9 +19,9 @@ use App\Http\Controllers\OrgaoController;
 $router->group(['prefix' => '/api'], function () use ($router) {
     $router->group(['prefix' => 'programa'], function () use ($router) {
 
-        $router->get('banca', 'BancaController@show');
+        $router->get('banca/orgao/{id}', 'BancaOrgaoController@show');
         $router->get('orgao', 'OrgaoController@show');
-        $router->get('assunto', 'AssuntoController@show');
+        $router->get('assunto/banca/{idBanca}/orgao/{idOrgao}', 'AssuntoController@show');
 
     });
 });

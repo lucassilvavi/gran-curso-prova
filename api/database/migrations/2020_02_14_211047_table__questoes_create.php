@@ -13,13 +13,20 @@ class TableQuestoesCreate extends Migration
      */
     public function up()
     {
-        Schema::create('Questoes', function (Blueprint $table) {
+        Schema::create('questoes', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->string('nome');
             $table->text('descricao');
-            $table->text('id_orgao');
-            $table->text('id_assunto');
+            $table->integer('rl_orgao_banca_id');
+            $table->integer('assunto_id');
+
+            $table->foreign('rl_orgao_banca_id')
+                ->references('id')->on('rl_orgao_banca');
+            $table->foreign('assunto_id')
+                ->references('id')->on('assunto');
         });
+
+
 
     }
 
@@ -30,6 +37,6 @@ class TableQuestoesCreate extends Migration
      */
     public function down()
     {
-        Schema::drop('Questoes');
+        Schema::drop('questoes');
     }
 }
