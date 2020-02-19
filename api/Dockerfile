@@ -25,7 +25,6 @@ RUN ls -la /tmp \
 
 WORKDIR "/application"
 
-RUN php artisan migrate && php artisan seed
 
 COPY . /application
 COPY ./docker/php-fpm/docker-entrypoint.sh /usr/local/bin/
